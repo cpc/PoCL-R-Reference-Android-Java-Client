@@ -9,6 +9,13 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project("pocl_rreferenceandroidjavaclient")
 
+# some interesting parameters set during init.
+# Useful when compiling JOCL for android
+message(WARNING "-DANDROID_NDK=${ANDROID_NDK} ")
+message(WARNING "-DANDROID_PLATFORM=${ANDROID_PLATFORM_LEVEL}")
+message(WARNING "-DANDROID_ABI=${ANDROID_ABI}")
+message(WARNING "-DANDROID_NATIVE_API_LEVEL=${ANDROID_PLATFORM_LEVEL}")
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.

@@ -21,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- This snippet is required to access local libraries on newer android version -->
+        <uses-native-library
+            android:name="libOpenCL.so"
+            android:required="false" />
     </application>
 
 </manifest>
