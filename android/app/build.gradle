@@ -13,6 +13,10 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+//      this disables the arm32 and x86 builds of the app
+        ndk {
+            abiFilters "arm64-v8a"
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {

@@ -4,3 +4,6 @@
 [submodule "external/JOCLRoot/JOCLCommon"]
 	path = external/JOCLRoot/JOCLCommon
 	url = git@github.com:gpu/JOCLCommon.git
+[submodule "external/pocl"]
+	path = external/pocl
+	url = git@github.com:pocl/pocl.git

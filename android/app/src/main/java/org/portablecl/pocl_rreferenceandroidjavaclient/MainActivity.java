@@ -32,7 +32,11 @@ import java.util.List;
  * )
  */
 public class MainActivity extends AppCompatActivity {
+    static {
+        System.loadLibrary("pocl_rreferenceandroidjavaclient");
+    }
 
+    public static native void setNativeEnv(String key, String value);
 
     /**
      * used to print text on the app screen
@@ -93,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String cache_dir = getCacheDir().getAbsolutePath();
+        System.setProperty("POCL_CACHE_DIR", cache_dir);
+        setNativeEnv("POCL_CACHE_DIR", cache_dir);
+        setNativeEnv("POCL_DEVICES", "remote");
+        setNativeEnv("POCL_REMOTE0_PARAMETERS", "192.168.88.248:10998/0");
+        setNativeEnv("POCL_DEBUG", "all");
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
