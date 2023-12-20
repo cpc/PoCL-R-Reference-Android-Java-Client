@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         String cache_dir = getCacheDir().getAbsolutePath();
         System.setProperty("POCL_CACHE_DIR", cache_dir);
         setNativeEnv("POCL_CACHE_DIR", cache_dir);
-        setNativeEnv("POCL_DEVICES", "remote");
+        setNativeEnv("POCL_DEVICES", "proxy remote");
         setNativeEnv("POCL_REMOTE0_PARAMETERS", "192.168.88.248:10998/0");
         setNativeEnv("POCL_DEBUG", "all");
 

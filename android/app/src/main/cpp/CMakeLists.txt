@@ -56,25 +56,33 @@ find_library( # Sets the name of the path variable.
         # you want CMake to locate.
         log)
 
+# create a list of pocl build arguments, as you can see,
+# there are quite a lot of them to build for android
 set(BUILD_POCL_ARGS
         -DENABLE_LLVM=0
-        -DENABLE_LOADABLE_DRIVERS=0
-        -DENABLE_HOST_CPU_DEVICES=0
+        # required once llvm is disabled
+        -DHOST_DEVICE_BUILD_HASH=00000000
+        # not available on android
         -DENABLE_ICD=0
-        -DENABLE_PROXY_DEVICE=NO
+        -DENABLE_LOADABLE_DRIVERS=0
+        # basic/pthread device
+        -DENABLE_HOST_CPU_DEVICES=0
+        # to use local libopencl
+        -DENABLE_PROXY_DEVICE=YES
         -DENABLE_REMOTE_CLIENT=YES
         -DENABLE_HWLOC=0
-        -DHOST_DEVICE_BUILD_HASH=00000000
         -DENABLE_POCLCC=0
         -DENABLE_TESTS=0
         -DENABLE_EXAMPLES=0
 #        STILL NEEDED?
         -DENABLE_LOCAL_INTEROP=0
+        # todo: set to release
         -DCMAKE_BUILD_TYPE=Debug
         -DVISIBILITY_HIDDEN=NO
+        # needed for proxy device
         -DBUILD_SHARED_LIBS=YES
+        -DPROXY_LIBOPENCL_STUB_DIR=${EXTERNAL_PATH}/libopencl-stub
         -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/pocl
-#        -DCMAKE_MAKE_PROGRAM=${ANDROID_NDK}/prebuilt/linux-x86_64/make
         -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake
         -DANDROID_NDK=${ANDROID_NDK}
         -DANDROID_PLATFORM=${ANDROID_PLATFORM_LEVEL}
