@@ -10,9 +10,12 @@ import static org.jocl.CL.clGetDeviceInfo;
 import static org.jocl.CL.clGetPlatformIDs;
 import static org.jocl.CL.clGetPlatformInfo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,7 +34,7 @@ import java.util.List;
  * <a href="https://github.com/gpu/JOCLSamples/blob/master/src/main/java/org/jocl/samples/JOCLDeviceQuery.java">...</a>
  * )
  */
-public class MainActivity extends AppCompatActivity {
+public class DeviceDemoActivity extends AppCompatActivity {
     static {
         System.loadLibrary("pocl_rreferenceandroidjavaclient");
     }
@@ -98,11 +101,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // helper class to get options chosen by the user
+        ConfigStore configStore = new ConfigStore(this);
+
         String cache_dir = getCacheDir().getAbsolutePath();
         System.setProperty("POCL_CACHE_DIR", cache_dir);
         setNativeEnv("POCL_CACHE_DIR", cache_dir);
-        setNativeEnv("POCL_DEVICES", "proxy remote");
-        setNativeEnv("POCL_REMOTE0_PARAMETERS", "192.168.88.248:10998/0");
+        String devicesString = configStore.getPoclDevices();
+        setNativeEnv("POCL_DEVICES", devicesString);
+        String remoteString = configStore.getRemoteIp() + "/0";
+        setNativeEnv("POCL_REMOTE0_PARAMETERS", remoteString);
         setNativeEnv("POCL_DEBUG", "all");
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -111,52 +119,73 @@ public class MainActivity extends AppCompatActivity {
         tv = binding.sampleText;
         tv.setText("");
 
-        // Obtain the number of platforms
-        int[] numPlatforms = new int[1];
-        clGetPlatformIDs(0, null, numPlatforms);
+        try {
+            // Obtain the number of platforms
+            int[] numPlatforms = new int[1];
+            clGetPlatformIDs(0, null, numPlatforms);
 
-        String displayString = "";
-        displayString = "Number of platforms: " + numPlatforms[0];
-        logString(displayString);
-
-        // Obtain the platform IDs
-        cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
-        clGetPlatformIDs(platforms.length, platforms, null);
-
-        // Collect all devices of all platforms
-        List<cl_device_id> devices = new ArrayList<cl_device_id>();
-        for (int i = 0; i < platforms.length; i++) {
-            String platformName = getString(platforms[i], CL_PLATFORM_NAME);
-
-            // Obtain the number of devices for the current platform
-            int[] numDevices = new int[1];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
-
-            displayString = "Number of devices in platform " + platformName + ": " + numDevices[0];
+            String displayString = "";
+            displayString = "Number of platforms: " + numPlatforms[0];
             logString(displayString);
 
-            cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
-            clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+            // Obtain the platform IDs
+            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
+            clGetPlatformIDs(platforms.length, platforms, null);
 
-            devices.addAll(Arrays.asList(devicesArray));
+            // Collect all devices of all platforms
+            List<cl_device_id> devices = new ArrayList<cl_device_id>();
+            for (int i = 0; i < platforms.length; i++) {
+                String platformName = getString(platforms[i], CL_PLATFORM_NAME);
+
+                // Obtain the number of devices for the current platform
+                int[] numDevices = new int[1];
+                clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
+
+                displayString = "Number of devices in platform " + platformName + ": " + numDevices[0];
+                logString(displayString);
+
+                cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
+                clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+
+                devices.addAll(Arrays.asList(devicesArray));
+            }
+
+            // Print some info on each device
+            for (int i = 0; i < devices.size(); i++) {
+                cl_device_id device = devices.get(0);
+                String deviceName = getString(device, CL_DEVICE_NAME);
+                displayString = String.format("device %d name: %s", i, deviceName);
+                logString(displayString);
+
+                String deviceVersion = getString(device, CL_DEVICE_VERSION);
+                displayString = String.format("device %d version: %s", i, deviceVersion);
+                logString(displayString);
+
+                String deviceDriverVersion = getString(device, CL_DRIVER_VERSION);
+                displayString = String.format("device %d driver version: %s", i, deviceDriverVersion);
+                logString(displayString);
+            }
+        }catch (OutOfMemoryError | Exception e) {
+            Toast.makeText( this, "error occurred, possibly incorrect server address?",
+                    Toast.LENGTH_LONG).show();
         }
 
+    }
 
-        // Print some info on each device
-        for (int i = 0; i < devices.size(); i++) {
-            cl_device_id device = devices.get(0);
-            String deviceName = getString(device, CL_DEVICE_NAME);
-            displayString = String.format("device %d name: %s", i, deviceName);
-            logString(displayString);
+    /**
+     * override the destroy function to restart the app. This allows pocl to be destroyed and
+     * reinitialized with different parameters.
+     */
+    @Override
+    protected void onDestroy() {
 
-            String deviceVersion = getString(device, CL_DEVICE_VERSION);
-            displayString = String.format("device %d version: %s", i, deviceVersion);
-            logString(displayString);
+        // exit and restart the app after going back to startup activity
+        Context appctx = getApplicationContext();
+        Intent i = appctx.getPackageManager().getLaunchIntentForPackage(appctx.getPackageName());
+        Intent restartIntent = Intent.makeRestartActivityTask(i.getComponent());
+        appctx.startActivity(restartIntent);
+        Runtime.getRuntime().exit(0);
 
-            String deviceDriverVersion = getString(device, CL_DRIVER_VERSION);
-            displayString = String.format("device %d driver version: %s", i, deviceDriverVersion);
-            logString(displayString);
-        }
-
+        super.onDestroy();
     }
 }

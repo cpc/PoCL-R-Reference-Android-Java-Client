@@ -24,10 +24,10 @@ Java_org_portablecl_pocl_1rreferenceandroidjavaclient_MainActivity_stringFromJNI
 //}
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_portablecl_pocl_1rreferenceandroidjavaclient_MainActivity_setNativeEnv(JNIEnv *env,
-                                                                                jclass clazz,
-                                                                                jstring key,
-                                                                                jstring value) {
+Java_org_portablecl_pocl_1rreferenceandroidjavaclient_DeviceDemoActivity_setNativeEnv(JNIEnv *env,
+                                                                                      jclass clazz,
+                                                                                      jstring key,
+                                                                                      jstring value) {
     char *c_key = (char *) env->GetStringUTFChars(key, 0);
     char *c_value = (char *) env->GetStringUTFChars(value, 0);
     __android_log_print(ANDROID_LOG_INFO, "Native utils", "setting env variable: %s : %s", c_key,

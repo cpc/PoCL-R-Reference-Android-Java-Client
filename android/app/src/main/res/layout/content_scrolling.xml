@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".StartupActivity"
+    tools:showIn="@layout/activity_startup">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PoCL Device"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Switch
+                android:id="@+id/proxySwitch"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Local (proxy)" />
+
+            <Switch
+                android:id="@+id/remoteSwitch"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Remote (PoCL-R)" />
+        </TableRow>
+
+        <EditText
+            android:id="@+id/remoteText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:text="Remote IP address" />
+
+        <Button
+            android:id="@+id/demoButton1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start device info demo" />
+
+        <Button
+            android:id="@+id/demoButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start mendelbrot demo" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

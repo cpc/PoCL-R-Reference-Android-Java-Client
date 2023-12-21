@@ -8,6 +8,7 @@
          "ro.mediatek.platform" system property but that just means that property does not exist
     -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -19,15 +20,25 @@
         android:theme="@style/Theme.PoCLRReferenceAndroidJavaClient"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".StartupActivity"
+            android:exported="true"
+            android:label="@string/title_activity_startup"
+            android:theme="@style/Theme.PoCLRReferenceAndroidJavaClient.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- This snippet is required to access local libraries on newer android version -->
+        <activity
+            android:name=".DeviceDemoActivity"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity> <!-- This snippet is required to access local libraries on newer android version -->
         <uses-native-library
             android:name="libOpenCL.so"
             android:required="false" />
