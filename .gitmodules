@@ -7,6 +7,3 @@
 [submodule "external/pocl"]
 	path = external/pocl
 	url = git@github.com:pocl/pocl.git
-[submodule "external/libopencl-stub"]
-	path = external/libopencl-stub
-	url = git@github.com:krrishnarraj/libopencl-stub.git

@@ -81,7 +81,7 @@ set(BUILD_POCL_ARGS
         -DVISIBILITY_HIDDEN=NO
         # needed for proxy device
         -DBUILD_SHARED_LIBS=YES
-        -DPROXY_LIBOPENCL_STUB_DIR=${EXTERNAL_PATH}/libopencl-stub
+        -DPROXY_USE_LIBOPENCL_STUB=YES
         -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/pocl
         -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake
         -DANDROID_NDK=${ANDROID_NDK}
