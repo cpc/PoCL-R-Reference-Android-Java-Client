@@ -51,6 +51,9 @@ Android constantly updates packages and libraries that can break with newer vers
 | NDK                           | 25.1.8937393            | (android layout in project tab) app/cpp/inlcudes/NDK                   |
 | C++                           | 17                      | android/app/build.gradle > cppFlags '-std=c++\<version\>'              |
 
+## PoCL-R server
+In order to use the remote device, a remote device needs to be available. See the [PoCL Documentations](http://portablecl.org/docs/html/remote.html?highlight=remote#remote-driver) on how to set up and build the remote server
+
 ## Tips and Tricks
 
 ### Check that phone exposes the OpenCL library
