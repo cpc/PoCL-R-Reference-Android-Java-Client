@@ -9,6 +9,7 @@ import static org.jocl.CL.clGetDeviceIDs;
 import static org.jocl.CL.clGetDeviceInfo;
 import static org.jocl.CL.clGetPlatformIDs;
 import static org.jocl.CL.clGetPlatformInfo;
+import static org.portablecl.pocl_rreferenceandroidjavaclient.NativeUtils.setNativeEnv;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,11 +36,6 @@ import java.util.List;
  * )
  */
 public class DeviceDemoActivity extends AppCompatActivity {
-    static {
-        System.loadLibrary("pocl_rreferenceandroidjavaclient");
-    }
-
-    public static native void setNativeEnv(String key, String value);
 
     /**
      * used to print text on the app screen
@@ -152,7 +148,7 @@ public class DeviceDemoActivity extends AppCompatActivity {
 
             // Print some info on each device
             for (int i = 0; i < devices.size(); i++) {
-                cl_device_id device = devices.get(0);
+                cl_device_id device = devices.get(i);
                 String deviceName = getString(device, CL_DEVICE_NAME);
                 displayString = String.format("device %d name: %s", i, deviceName);
                 logString(displayString);

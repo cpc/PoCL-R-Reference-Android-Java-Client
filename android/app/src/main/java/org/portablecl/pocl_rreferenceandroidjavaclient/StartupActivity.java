@@ -63,19 +63,15 @@ public class StartupActivity extends AppCompatActivity {
         });
 
         configStore = new ConfigStore(this);
-
-
-        proxySwitch = findViewById(R.id.proxySwitch);
-        proxySwitch.setOnClickListener(deviceSwitchListener);
-        remoteSwitch = findViewById(R.id.remoteSwitch);
-        remoteSwitch.setOnClickListener(deviceSwitchListener);
         String poclDevicesString = configStore.getPoclDevices();
+        proxySwitch = findViewById(R.id.proxySwitch);
         if(poclDevicesString.contains("proxy")) {
             proxySwitch.setChecked(true);
         }
-        if(poclDevicesString.contains("remote")) {
-            remoteSwitch.setChecked(true);
-        }
+        remoteSwitch = findViewById(R.id.remoteSwitch);
+        // always include remote device
+        remoteSwitch.setChecked(true);
+        remoteSwitch.setClickable(false);
 
         remoteText = findViewById(R.id.remoteText);
         String remoteIp = configStore.getRemoteIp();
@@ -86,25 +82,6 @@ public class StartupActivity extends AppCompatActivity {
         demoButton2 = findViewById(R.id.demoButton2);
         demoButton2.setOnClickListener(demoButtonListener);
     }
-
-    /**
-     * Handle callbacks related to the user pressing on switches. In this case, we are turning
-     * off the other switch when one switch is pressed.
-     */
-    private final View.OnClickListener deviceSwitchListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            if(v != proxySwitch) {
-                proxySwitch.setChecked(false);
-            }
-
-            if(v != remoteSwitch) {
-                remoteSwitch.setChecked(false);
-            }
-
-        }
-    };
 
     /**
      * Handle demo button clicks. Check the submitted values and start up one of the demo
@@ -136,9 +113,7 @@ public class StartupActivity extends AppCompatActivity {
             if(v == demoButton1) {
                 demoClass = DeviceDemoActivity.class;
             }else {
-                Toast.makeText(StartupActivity.this, "This demo has not been implemented yet",
-                        Toast.LENGTH_SHORT).show();
-                return;
+                demoClass = MandelbrotDemoActivity.class;
             }
             Intent i = new Intent(getApplicationContext(), demoClass);
             startActivity(i);
