@@ -73,6 +73,11 @@ Some phones provide a OpenCL library that can be used in C. This library needs t
 3. install the android Native Development Kit (NDK) from `Tools > SDK Manager > SDK Tools`
 4. install CMake from `Tools > SDK Manager > SDK Tools`
 
+## Known issues
+
+1. Some OpenCL implementations on Android do not provide all the metadata needed by pocl. A work around is to also have a kernel be built both for the proxy and pocl-r devices.
+2. Turning the screen off and on will cause the return buffer in the mendelbrot demo to be filled with zeros.
+
 ## Authors and acknowledgment
 This project is made and maintained by the [CPC](https://www.tuni.fi/cpc/index.html) group.
 
