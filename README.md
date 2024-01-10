@@ -51,6 +51,9 @@ Android constantly updates packages and libraries that can break with newer vers
 | NDK                           | 25.1.8937393            | (android layout in project tab) app/cpp/inlcudes/NDK                   |
 | C++                           | 17                      | android/app/build.gradle > cppFlags '-std=c++\<version\>'              |
 
+## PoCL-R server
+In order to use the remote device, a remote device needs to be available. See the [PoCL Documentations](http://portablecl.org/docs/html/remote.html?highlight=remote#remote-driver) on how to set up and build the remote server
+
 ## Tips and Tricks
 
 ### Check that phone exposes the OpenCL library
@@ -69,6 +72,11 @@ Some phones provide a OpenCL library that can be used in C. This library needs t
 2. install the android sdk from `Tools > SDK Manager > SDK Platforms`
 3. install the android Native Development Kit (NDK) from `Tools > SDK Manager > SDK Tools`
 4. install CMake from `Tools > SDK Manager > SDK Tools`
+
+## Known issues
+
+1. Some OpenCL implementations on Android do not provide all the metadata needed by pocl. A work around is to also have a kernel be built both for the proxy and pocl-r devices.
+2. Turning the screen off and on will cause the return buffer in the mendelbrot demo to be filled with zeros.
 
 ## Authors and acknowledgment
 This project is made and maintained by the [CPC](https://www.tuni.fi/cpc/index.html) group.
