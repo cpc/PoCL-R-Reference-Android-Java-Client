@@ -19,7 +19,7 @@ In order to build the reference app, a number of programs are needed. Here is a 
 Clone the repo with its submodules with the following command:
 
 ```
-git clone --recursive-submodules git@gitlab.tuni.fi:cs/cpc/pocl-r-reference-android-java-client.git
+git clone --recursive-submodules git@github.com:cpc/PoCL-R-Reference-Android-Java-Client.git
 ```
 
 or initialize submodules after cloning with:
@@ -54,7 +54,7 @@ Android constantly updates packages and libraries that can break with newer vers
 | C++                           | 17                      | android/app/build.gradle > cppFlags '-std=c++\<version\>'              |
 
 ## PoCL-R server
-In order to use the remote device, a remote device needs to be available. See the [PoCL Documentations](http://portablecl.org/docs/html/remote.html?highlight=remote#remote-driver) on how to set up and build the remote server
+In order to use the remote device, a remote device needs to be available. See the [PoCL Documentation](http://portablecl.org/docs/html/remote.html?highlight=remote#remote-driver) on how to set up and build the remote server
 
 ## Tips and Tricks
 
