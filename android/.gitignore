@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# built jocl files
+/app/libs/
