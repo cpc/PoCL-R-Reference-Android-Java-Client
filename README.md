@@ -2,8 +2,10 @@
 
 This Repository provides a reference application that uses [JOCL](https://github.com/gpu/JOCL) to provide access to PoCL-R in Java.
 
+<p float="left">
 <img src="./images/example_cl_info.jpeg" alt="example_cl_info" width="250"/>
 <img src="./images/example_mandelbrot.jpg" alt="example_mandelbrot" width="250"/>
+</p>
 
 ## Getting started
 
