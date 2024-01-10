@@ -1,6 +1,6 @@
 [submodule "external/JOCLRoot/JOCL"]
 	path = external/JOCLRoot/JOCL
-	url = git@github.com:gpu/JOCL.git
+	url = git@github.com:cpc/JOCL.git
 [submodule "external/JOCLRoot/JOCLCommon"]
 	path = external/JOCLRoot/JOCLCommon
 	url = git@github.com:gpu/JOCLCommon.git
