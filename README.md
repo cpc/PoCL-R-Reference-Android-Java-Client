@@ -19,7 +19,7 @@ In order to build the reference app, a number of programs are needed. Here is a 
 Clone the repo with its submodules with the following command:
 
 ```
-git clone --recursive-submodules git@github.com:cpc/PoCL-R-Reference-Android-Java-Client.git
+git clone --recurse-submodules git@github.com:cpc/PoCL-R-Reference-Android-Java-Client.git
 ```
 
 or initialize submodules after cloning with:
