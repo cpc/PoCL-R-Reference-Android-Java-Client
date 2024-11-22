@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".MandelbrotDemoActivity">
 
+    <Spinner
+        android:id="@+id/discoverySpinner2"
+        android:layout_width="355dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="28dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:popupBackground="@color/purple_200"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <SurfaceView
         android:id="@+id/MandelbrotView"
         android:layout_width="wrap_content"

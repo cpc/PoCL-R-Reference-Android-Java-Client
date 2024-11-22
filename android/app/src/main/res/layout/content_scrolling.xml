@@ -14,52 +14,92 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PoCL Device"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <TableRow
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Switch
-                android:id="@+id/proxySwitch"
-                android:layout_width="100dp"
+            <Spinner
+                android:id="@+id/discoverySpinner"
+                android:layout_width="355dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="28dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:popupBackground="@color/purple_200"
+                android:spinnerMode="dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Local (proxy)" />
+                android:layout_marginTop="16dp"
+                android:text="PoCL Device"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
 
             <Switch
                 android:id="@+id/remoteSwitch"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="175dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="17dp"
                 android:layout_weight="1"
-                android:text="Remote (PoCL-R)" />
-        </TableRow>
+                android:text="Remote (PoCL-R)"
+                android:textAlignment="textEnd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/discoverySpinner" />
 
-        <EditText
-            android:id="@+id/remoteText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Remote IP address" />
+            <Switch
+                android:id="@+id/proxySwitch"
+                android:layout_width="150dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="40dp"
+                android:layout_weight="1"
+                android:text="Local (proxy)"
+                android:textAlignment="textEnd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/discoverySpinner" />
 
-        <Button
-            android:id="@+id/demoButton1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start device info demo" />
+            <EditText
+                android:id="@+id/remoteText"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="185dp"
+                android:layout_marginEnd="30dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Remote IP address"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <Button
-            android:id="@+id/demoButton2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start mendelbrot demo" />
+            <Button
+                android:id="@+id/demoButton1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Start device info demo"
+                app:layout_constraintTop_toBottomOf="@+id/remoteText"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <Button
+                android:id="@+id/demoButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Start mendelbrot demo"
+                app:layout_constraintTop_toBottomOf="@+id/demoButton1"
+                tools:layout_editor_absoluteX="0dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

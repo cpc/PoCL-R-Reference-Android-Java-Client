@@ -17,6 +17,8 @@ public class ConfigStore {
 
     private final static String devicesKey = "devicestextkey";
 
+    private final static String discoveredIPKey = "discoveredipkey";
+
     /**
      * @param context can be an activity for example
      */
@@ -33,6 +35,13 @@ public class ConfigStore {
 
     public void setRemoteIp(String ipString) {
         editor.putString(keyPrefix+ipKey, ipString);
+    }
+
+    public String getDiscoveredIp() {
+        return preferences.getString(keyPrefix+discoveredIPKey, null);
+    }
+    public void setDiscoveredIp(String dipString) {
+        editor.putString(keyPrefix+discoveredIPKey, dipString);
     }
 
     public String getPoclDevices() {

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * inspired by the JOCLSamples devices query
  * (
@@ -41,7 +42,6 @@ public class DeviceDemoActivity extends AppCompatActivity {
      * used to print text on the app screen
      */
     TextView tv;
-
     private ActivityMainBinding binding;
 
     /**
@@ -165,7 +165,6 @@ public class DeviceDemoActivity extends AppCompatActivity {
             Toast.makeText( this, "error occurred, possibly incorrect server address?",
                     Toast.LENGTH_LONG).show();
         }
-
     }
 
     /**
