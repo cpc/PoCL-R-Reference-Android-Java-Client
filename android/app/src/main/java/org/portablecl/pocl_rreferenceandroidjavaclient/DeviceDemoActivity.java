@@ -14,6 +14,8 @@ import static org.portablecl.pocl_rreferenceandroidjavaclient.NativeUtils.setNat
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * inspired by the JOCLSamples devices query
  * (
@@ -41,8 +44,16 @@ public class DeviceDemoActivity extends AppCompatActivity {
      * used to print text on the app screen
      */
     TextView tv;
-
     private ActivityMainBinding binding;
+
+    /**
+     * a thread to run things in background and not block the UI thread
+     */
+    private HandlerThread backgroundThread;
+    /**
+     * a Handler that is used to schedule work on the backgroundThread
+     */
+    private Handler backgroundThreadHandler;
 
     /**
      * Returns the value of the device info parameter with the given name
@@ -90,8 +101,95 @@ public class DeviceDemoActivity extends AppCompatActivity {
      */
     private void logString(String input) {
         Log.w("jocl", input);
-        tv.append(input + "\n");
+        runOnUiThread(() -> tv.append(input + "\n"));
     }
+
+    /**
+     * function to start the backgroundThread + handler
+     */
+    private void startBackgroundThread() {
+
+        backgroundThread = new HandlerThread("MandelbrotBackground");
+        backgroundThread.start();
+        backgroundThreadHandler = new Handler(backgroundThread.getLooper());
+
+    }
+
+    /**
+     * function to safely stop backgroundThread + handler
+     */
+    private void stopBackgroundThread() {
+
+        // interrupt the thread, causing the while loop exit
+        backgroundThread.interrupt();
+        backgroundThread.quitSafely();
+        try {
+            backgroundThread.join(1000);
+            backgroundThread = null;
+            backgroundThreadHandler = null;
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private final Runnable platformInfoRunnable = new Runnable() {
+
+
+        @Override
+        public void run() {
+            try {
+                // Obtain the number of platforms
+                int[] numPlatforms = new int[1];
+                clGetPlatformIDs(0, null, numPlatforms);
+
+                String displayString = "";
+                displayString = "Number of platforms: " + numPlatforms[0];
+                logString(displayString);
+
+                // Obtain the platform IDs
+                cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
+                clGetPlatformIDs(platforms.length, platforms, null);
+
+                // Collect all devices of all platforms
+                List<cl_device_id> devices = new ArrayList<cl_device_id>();
+                for (cl_platform_id platform : platforms) {
+                    String platformName = getString(platform, CL_PLATFORM_NAME);
+
+                    // Obtain the number of devices for the current platform
+                    int[] numDevices = new int[1];
+                    clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
+
+                    displayString = "Number of devices in platform " + platformName + ": " + numDevices[0];
+                    logString(displayString);
+
+                    cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
+                    clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+
+                    devices.addAll(Arrays.asList(devicesArray));
+                }
+
+                // Print some info on each device
+                for (int i = 0; i < devices.size(); i++) {
+                    cl_device_id device = devices.get(i);
+                    String deviceName = getString(device, CL_DEVICE_NAME);
+                    displayString = String.format("device %d name: %s", i, deviceName);
+                    logString(displayString);
+
+                    String deviceVersion = getString(device, CL_DEVICE_VERSION);
+                    displayString = String.format("device %d version: %s", i, deviceVersion);
+                    logString(displayString);
+
+                    String deviceDriverVersion = getString(device, CL_DRIVER_VERSION);
+                    displayString = String.format("device %d driver version: %s", i, deviceDriverVersion);
+                    logString(displayString);
+                }
+            } catch (OutOfMemoryError | Exception e) {
+                Toast.makeText(DeviceDemoActivity.this, "error occurred, possibly incorrect server address?",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +203,7 @@ public class DeviceDemoActivity extends AppCompatActivity {
         setNativeEnv("POCL_CACHE_DIR", cache_dir);
         String devicesString = configStore.getPoclDevices();
         setNativeEnv("POCL_DEVICES", devicesString);
-        String remoteString = configStore.getRemoteIp() + "/0";
+        String remoteString = configStore.getRemoteIp();
         setNativeEnv("POCL_REMOTE0_PARAMETERS", remoteString);
         setNativeEnv("POCL_DEBUG", "all");
 
@@ -115,57 +213,8 @@ public class DeviceDemoActivity extends AppCompatActivity {
         tv = binding.sampleText;
         tv.setText("");
 
-        try {
-            // Obtain the number of platforms
-            int[] numPlatforms = new int[1];
-            clGetPlatformIDs(0, null, numPlatforms);
-
-            String displayString = "";
-            displayString = "Number of platforms: " + numPlatforms[0];
-            logString(displayString);
-
-            // Obtain the platform IDs
-            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
-            clGetPlatformIDs(platforms.length, platforms, null);
-
-            // Collect all devices of all platforms
-            List<cl_device_id> devices = new ArrayList<cl_device_id>();
-            for (int i = 0; i < platforms.length; i++) {
-                String platformName = getString(platforms[i], CL_PLATFORM_NAME);
-
-                // Obtain the number of devices for the current platform
-                int[] numDevices = new int[1];
-                clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, null, numDevices);
-
-                displayString = "Number of devices in platform " + platformName + ": " + numDevices[0];
-                logString(displayString);
-
-                cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
-                clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
-
-                devices.addAll(Arrays.asList(devicesArray));
-            }
-
-            // Print some info on each device
-            for (int i = 0; i < devices.size(); i++) {
-                cl_device_id device = devices.get(i);
-                String deviceName = getString(device, CL_DEVICE_NAME);
-                displayString = String.format("device %d name: %s", i, deviceName);
-                logString(displayString);
-
-                String deviceVersion = getString(device, CL_DEVICE_VERSION);
-                displayString = String.format("device %d version: %s", i, deviceVersion);
-                logString(displayString);
-
-                String deviceDriverVersion = getString(device, CL_DRIVER_VERSION);
-                displayString = String.format("device %d driver version: %s", i, deviceDriverVersion);
-                logString(displayString);
-            }
-        }catch (OutOfMemoryError | Exception e) {
-            Toast.makeText( this, "error occurred, possibly incorrect server address?",
-                    Toast.LENGTH_LONG).show();
-        }
-
+        startBackgroundThread();
+        backgroundThreadHandler.post(platformInfoRunnable);
     }
 
     /**
@@ -175,6 +224,7 @@ public class DeviceDemoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
+        stopBackgroundThread();
         // exit and restart the app after going back to startup activity
         Context appctx = getApplicationContext();
         Intent i = appctx.getPackageManager().getLaunchIntentForPackage(appctx.getPackageName());

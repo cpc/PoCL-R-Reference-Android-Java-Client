@@ -1,24 +1,22 @@
 package org.portablecl.pocl_rreferenceandroidjavaclient;
 
-import static java.lang.Character.isDigit;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.portablecl.pocl_rreferenceandroidjavaclient.databinding.ActivityStartupBinding;
 
@@ -32,11 +30,15 @@ public class StartupActivity extends AppCompatActivity {
 
     private TextView remoteText;
 
+    private String discoveredRemoteIP;
+
     private Button demoButton1;
 
     private Button demoButton2;
 
     private ConfigStore configStore;
+
+    RemoteDiscoveryManager remoteDiscoveryManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,7 @@ public class StartupActivity extends AppCompatActivity {
         configStore = new ConfigStore(this);
         String poclDevicesString = configStore.getPoclDevices();
         proxySwitch = findViewById(R.id.proxySwitch);
-        if(poclDevicesString.contains("proxy")) {
+        if (poclDevicesString.contains("proxy")) {
             proxySwitch.setChecked(true);
         }
         remoteSwitch = findViewById(R.id.remoteSwitch);
@@ -74,13 +76,37 @@ public class StartupActivity extends AppCompatActivity {
         remoteSwitch.setClickable(false);
 
         remoteText = findViewById(R.id.remoteText);
-        String remoteIp = configStore.getRemoteIp();
-        remoteText.setText(remoteIp);
+        remoteText.setText(configStore.getRemoteIp());
+        discoveredRemoteIP = configStore.getDiscoveredIp();
 
         demoButton1 = findViewById(R.id.demoButton1);
         demoButton1.setOnClickListener(demoButtonListener);
         demoButton2 = findViewById(R.id.demoButton2);
         demoButton2.setOnClickListener(demoButtonListener);
+
+        Spinner discoverySpinner = findViewById(R.id.discoverySpinner);
+        // Set up a listener for the discovery spinner to handle user selection of a discovered device.
+        remoteDiscoveryManager = new RemoteDiscoveryManager(this, discoverySpinner,
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                               long id) {
+
+                        String selectedServer = remoteDiscoveryManager.deviceList.get(position).getDeviceAddress();
+                        if (!selectedServer.equals(RemoteDiscoveryManager.DEFAULT_SPINNER_LABEL)) {
+                            Log.d("DISC", "Spinner position selected: " + position + " : server " +
+                                    "selected " +
+                                    ": " + selectedServer);
+                            remoteText.setText(selectedServer);
+                            discoveredRemoteIP = selectedServer;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+
     }
 
     /**
@@ -92,13 +118,13 @@ public class StartupActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             String poclDevices = "";
-            if(proxySwitch.isChecked()) {
-                poclDevices +="proxy ";
+            if (proxySwitch.isChecked()) {
+                poclDevices += "proxy ";
             }
-            if(remoteSwitch.isChecked()) {
-                poclDevices +="remote ";
+            if (remoteSwitch.isChecked()) {
+                poclDevices += "remote ";
             }
-            if(poclDevices.isEmpty()) {
+            if (poclDevices.isEmpty()) {
                 Toast.makeText(StartupActivity.this, "Please select a device first",
                         Toast.LENGTH_SHORT).show();
                 return;
@@ -107,16 +133,29 @@ public class StartupActivity extends AppCompatActivity {
             // todo add some ip string checking
             configStore.setRemoteIp(remoteText.getText().toString());
             configStore.setPoclDevices(poclDevices);
+            configStore.setDiscoveredIp(discoveredRemoteIP);
             configStore.saveConfig();
 
             Class demoClass;
-            if(v == demoButton1) {
+            if (v == demoButton1) {
                 demoClass = DeviceDemoActivity.class;
-            }else {
+            } else {
                 demoClass = MandelbrotDemoActivity.class;
             }
             Intent i = new Intent(getApplicationContext(), demoClass);
             startActivity(i);
         }
     };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        remoteDiscoveryManager.stopAllDiscoveries();
+    }
+
+    @Override
+    protected void onDestroy() {
+        remoteDiscoveryManager.stopAllDiscoveries();
+        super.onDestroy();
+    }
 }

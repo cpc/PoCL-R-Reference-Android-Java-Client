@@ -29,20 +29,6 @@ message(WARNING "-DANDROID_PLATFORM=${ANDROID_PLATFORM_LEVEL}")
 message(WARNING "-DANDROID_ABI=${ANDROID_ABI}")
 message(WARNING "-DANDROID_NATIVE_API_LEVEL=${ANDROID_PLATFORM_LEVEL}")
 
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
-
-add_library( # Sets the name of the library.
-        pocl_rreferenceandroidjavaclient
-
-        # Sets the library as a shared library.
-        SHARED
-
-        # Provides a relative path to your source file(s).
-        native-lib.cpp)
-
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -88,6 +74,8 @@ set(BUILD_POCL_ARGS
         -DANDROID_PLATFORM=${ANDROID_PLATFORM_LEVEL}
         -DANDROID_ABI=${ANDROID_ABI}
         -DANDROID_NATIVE_API_LEVEL=${ANDROID_PLATFORM_LEVEL}
+        # to use network discovery
+        -DENABLE_REMOTE_DISCOVERY_ANDROID=YES
         )
 
 ExternalProject_Add(pocl
@@ -97,12 +85,28 @@ ExternalProject_Add(pocl
         BUILD_ALWAYS True
         BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/pocl/lib/libpocl.so
         )
-
+include_directories("${CMAKE_BINARY_DIR}")
 add_library(libpocl SHARED IMPORTED)
 set_target_properties(libpocl PROPERTIES IMPORTED_LOCATION
         ${CMAKE_CURRENT_BINARY_DIR}/pocl/lib/libpocl.so)
 
-add_dependencies(pocl_rreferenceandroidjavaclient pocl)
+# Creates and names a library, sets it as either STATIC
+# or SHARED, and provides the relative paths to its source code.
+# You can define multiple libraries, and CMake builds them for you.
+# Gradle automatically packages shared libraries with your APK.
+
+add_library( # Sets the name of the library.
+        pocl_rreferenceandroidjavaclient
+
+        # Sets the library as a shared library.
+        SHARED
+
+        # Provides a relative path to your source file(s).
+        native-lib.cpp)
+
+target_include_directories(pocl_rreferenceandroidjavaclient
+        PRIVATE
+        ${EXTERNAL_PATH}/pocl/include)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
@@ -110,9 +114,10 @@ add_dependencies(pocl_rreferenceandroidjavaclient pocl)
 
 target_link_libraries( # Specifies the target library.
         pocl_rreferenceandroidjavaclient
-
-#        ${CMAKE_CURRENT_BINARY_DIR}/pocl/lib/libpocl.so
-        libpocl
         # Links the target library to the log library
         # included in the NDK.
-        ${log-lib})
+        ${log-lib}
+        libpocl
+        )
+
+add_dependencies(pocl_rreferenceandroidjavaclient pocl)
