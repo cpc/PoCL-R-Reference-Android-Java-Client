@@ -105,7 +105,7 @@ public class DeviceDemoActivity extends AppCompatActivity {
         setNativeEnv("POCL_CACHE_DIR", cache_dir);
         String devicesString = configStore.getPoclDevices();
         setNativeEnv("POCL_DEVICES", devicesString);
-        String remoteString = configStore.getRemoteIp() + "/0";
+        String remoteString = configStore.getRemoteIp();
         setNativeEnv("POCL_REMOTE0_PARAMETERS", remoteString);
         setNativeEnv("POCL_DEBUG", "all");
 

@@ -24,6 +24,13 @@ public class RemoteDiscoveryManager {
         String serverIP;
         String serverInfo;
         int deviceCount;
+
+        public ServerInfo(String serverID, String serverIP, String serverInfo, int deviceCount) {
+            this.serverID = serverID;
+            this.serverIP = serverIP;
+            this.serverInfo = serverInfo;
+            this.deviceCount = deviceCount;
+        }
     }
 
     // Represents a device in the spinner, with an address and type.
@@ -58,7 +65,7 @@ public class RemoteDiscoveryManager {
     public static final String DEFAULT_SPINNER_LABEL = "Select a remote device";
     private final DiscoverySpinnerAdapter deviceSpinnerAdapter;
     public ArrayList<DeviceSelectionEntry> deviceList;
-    private final Spinner deviceSpinner;
+
     public static HashMap<String, ServerInfo> discoveredServers;
     private static DNSDiscoveryHandler dnsDiscoveryHandler;
 
@@ -74,7 +81,6 @@ public class RemoteDiscoveryManager {
         deviceList = new ArrayList<>();
         deviceList.add(new DeviceSelectionEntry());
         deviceSpinnerAdapter = new DiscoverySpinnerAdapter(activity, android.R.layout.simple_spinner_item, deviceList);
-        deviceSpinner = discoverySpinner;
         discoverySpinner.setAdapter(deviceSpinnerAdapter);
         discoverySpinner.setOnItemSelectedListener(listener);
 
@@ -122,6 +128,10 @@ public class RemoteDiscoveryManager {
      * Updates the server map with the provided information, adding or updating servers.
      */
     private void updateServerMap(String key, String sID, String txt, int deviceNum) {
+        if (discoveredServers == null) {
+            Log.e(TAG, "(RESOLVER) discoveredServers is null");
+            return;
+        }
         // logic to decide if a discovered server is new or old, if server already exists, update it
         if (discoveredServers.containsKey(key)) {
             if (discoveredServers.get(key).serverID.equals(sID)) {
@@ -146,11 +156,7 @@ public class RemoteDiscoveryManager {
                 Log.d(TAG, "(RESOLVER) Service " + sID + " is registered with a different " + "address.");
             } else {
                 // If server is new, add it to the map
-                ServerInfo found = new ServerInfo();
-                found.serverID = sID;
-                found.serverIP = key;
-                found.serverInfo = txt;
-                found.deviceCount = deviceNum;
+                ServerInfo found = new ServerInfo(sID, key, txt, deviceNum);
                 discoveredServers.put(key, found);
                 Log.d(TAG, "(RESOLVER) Service " + sID + "is being added.\n");
                 addDevicesToSpinner(key, txt, deviceNum);
@@ -184,22 +190,21 @@ public class RemoteDiscoveryManager {
             }
 
             DeviceSelectionEntry so = new DeviceSelectionEntry(key + "/" + String.valueOf(i), deviceType);
-            boolean contains = false;
 
-            // Check if the device is already in the list
-            for (DeviceSelectionEntry value : deviceList) {
-                if (value.deviceAddress.contains(so.deviceAddress)) {
-                    contains = true;
-                    break;
-                }
-            }
-
-            boolean finalContains = contains;
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    boolean contains = false;
+                    // Check if the device is already in the list
+                    for (DeviceSelectionEntry value : deviceList) {
+                        if (value.deviceAddress.contains(so.deviceAddress)) {
+                            contains = true;
+                            break;
+                        }
+                    }
                     // If the device is not already in the list, add it
-                    if (!finalContains) {
+                    if (!contains) {
                         deviceList.add(so);
                         deviceSpinnerAdapter.notifyDataSetChanged();
                     }

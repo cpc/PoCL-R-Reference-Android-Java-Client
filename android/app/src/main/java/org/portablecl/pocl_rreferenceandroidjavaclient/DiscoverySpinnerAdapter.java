@@ -16,13 +16,11 @@ import java.util.List;
  */
 public class DiscoverySpinnerAdapter extends ArrayAdapter<RemoteDiscoveryManager.DeviceSelectionEntry> {
 
-    private Context context; // Context in which the adapter is used
     private List<RemoteDiscoveryManager.DeviceSelectionEntry> objects; // List of device entries to be displayed in the spinner
 
     public DiscoverySpinnerAdapter(@NonNull Context context, int resource,
                                    @NonNull List<RemoteDiscoveryManager.DeviceSelectionEntry> objects) {
         super(context, resource, objects);
-        this.context = context;
         this.objects = objects;
     }
 

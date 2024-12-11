@@ -76,7 +76,7 @@ public class StartupActivity extends AppCompatActivity {
         remoteSwitch.setClickable(false);
 
         remoteText = findViewById(R.id.remoteText);
-        remoteText.setText("");
+        remoteText.setText(configStore.getRemoteIp());
         discoveredRemoteIP = configStore.getDiscoveredIp();
 
         demoButton1 = findViewById(R.id.demoButton1);

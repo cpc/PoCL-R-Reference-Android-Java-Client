@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 /**
@@ -34,7 +33,6 @@ public class DNSDiscoveryHandler {
                 (NsdManager) activity.getApplicationContext().getSystemService(Context.NSD_SERVICE);
         // Assign the RemoteDiscoveryManager instance
         remoteDiscoveryManager = ds;
-        WifiManager wifiManager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
 
         stop(); // Stop any ongoing discovery process, if any
         setupDiscoveryListener(); // Initialize discovery listener

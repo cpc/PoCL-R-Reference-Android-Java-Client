@@ -1,6 +1,10 @@
 #include <jni.h>
 #include <string>
 #include <android/log.h>
+
+#ifndef ENABLE_REMOTE_DISCOVERY_ANDROID
+#define ENABLE_REMOTE_DISCOVERY_ANDROID
+#endif
 #include "pocl_remote.h"
 
 extern "C"
